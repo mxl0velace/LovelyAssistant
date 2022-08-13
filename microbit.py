@@ -1,6 +1,10 @@
 # Imports go at the top
 from microbit import *
+from math import ceil
 
+# debug = 0 # normal operation
+# debug = 1 # always show value
+debug = 2 # always show suit
 
 heart = Image.HEART
 diamond = Image('00700:'
@@ -8,7 +12,7 @@ diamond = Image('00700:'
                 '79997:'
                 '07970:'
                 '00700')
-space = Image('00900:'
+spade = Image('00900:'
                 '09990:'
                 '99999:'
                 '90909:'
@@ -30,14 +34,14 @@ def angle_to_value(angle):
         return "Q"
     if angle > 353 - (27 * 3):
         return "J"
-    return round((angle - 20) / 27) + 1
+    return ceil((angle - 20) / 27) + 1
 
 # Imports go at the top
 from microbit import *
 
 
 # Code in a 'while True:' loop repeats forever
-while True:
+while debug == 0:
     initial = compass.heading()
     rolling = compass.heading()
     prev = -100
@@ -58,8 +62,30 @@ while True:
     
 
 # Code in a 'while True:' loop repeats forever
-while True:
-    display.show(club)
-    sleep(1000)
-    display.show("2")
-    sleep(1000)
+while debug == 1:
+    initial = compass.heading()
+    rolling = compass.heading()
+    while True:
+        rolling = compass.heading()
+        diff = rolling - initial
+        if diff < 0:
+            diff += 360
+        value = angle_to_value(diff)
+        if value == 10:
+            value = 0
+        display.show(value, wait=False)
+
+while debug == 2:
+    suit = 0
+    while True:
+        if accelerometer.was_gesture('shake'):
+            suit += 1
+        suit = suit % 4
+        if suit == 0:
+            display.show(heart)
+        elif suit == 1:
+            display.show(diamond)
+        elif suit == 2:
+            display.show(club)
+        else:
+            display.show(spade)
