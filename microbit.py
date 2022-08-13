@@ -2,9 +2,9 @@
 from microbit import *
 from math import ceil
 
-# debug = 0 # normal operation
+debug = 0 # normal operation
 # debug = 1 # always show value
-debug = 2 # always show suit
+# debug = 2 # always show suit
 
 heart = Image.HEART
 diamond = Image('00700:'
@@ -45,16 +45,30 @@ while debug == 0:
     initial = compass.heading()
     rolling = compass.heading()
     prev = -100
+    suit = 0
     while round(rolling/5) != round(prev/5):
         sleep(500)
         prev = rolling
         rolling = compass.heading()
+        if accelerometer.was_gesture('shake'):
+            suit += 1
+        suit = suit % 4
+
     diff = rolling - initial
     if diff < 0:
         diff += 360
     
     value = angle_to_value(diff)
     display.show(value)
+    sleep(500)
+    if suit == 0:
+        display.show(heart)
+    elif suit == 1:
+        display.show(diamond)
+    elif suit == 2:
+        display.show(club)
+    else:
+        display.show(spade)
     sleep(500)
     display.clear()
     sleep(500)
