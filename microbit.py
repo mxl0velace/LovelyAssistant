@@ -46,10 +46,11 @@ while debug == 0:
     rolling = compass.heading()
     prev = -100
     suit = 0
-    while round(rolling/5) != round(prev/5):
+    while not button_a.was_pressed():
         sleep(500)
         prev = rolling
         rolling = compass.heading()
+    while not button_b.was_pressed():
         if accelerometer.was_gesture('shake'):
             suit += 1
         suit = suit % 4
@@ -59,19 +60,20 @@ while debug == 0:
         diff += 360
     
     value = angle_to_value(diff)
-    display.show(value)
-    sleep(500)
-    if suit == 0:
-        display.show(heart)
-    elif suit == 1:
-        display.show(diamond)
-    elif suit == 2:
-        display.show(club)
-    else:
-        display.show(spade)
-    sleep(500)
-    display.clear()
-    sleep(500)
+    while not button_a.is_pressed():
+        display.show(value)
+        sleep(500)
+        if suit == 0:
+            display.show(heart)
+        elif suit == 1:
+            display.show(diamond)
+        elif suit == 2:
+            display.show(club)
+        else:
+            display.show(spade)
+        sleep(500)
+        display.clear()
+        sleep(500)
     
     
 
